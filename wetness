@@ -38,7 +38,7 @@ cat $css_file | \
 			property=`echo $line | awk -F':' '{print $1}'`
 			property=`strip $property`
 			value=`echo $line | awk -F':' '{print $2}'`
-			value=`strip $value`
+			value=`strip "$value"`
 
 			line="$property: $value;"
 
