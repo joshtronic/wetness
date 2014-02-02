@@ -1,0 +1,15 @@
+html
+{
+	width: 100%;
+}
+
+body
+{
+	width: 100%;
+	font-size: 1em;
+}
+
+.lead
+{
+	font-size: 150%;
+}

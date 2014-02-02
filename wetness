@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+if [ -z $1 ];
+then
+	echo 'Usage: wetness /path/to/file.css'
+	exit 1
+fi
+
+css_file=$1
+
+if [ ! -e $css_file ];
+then
+	echo 'Error: Supplied CSS file does not exist.'
+	exit 1
+fi
+
+declare -A properties
+declare -A dupes
+inside=false
+
+strip()
+{
+	echo `echo $1 | sed -e 's/^ *//g' -e 's/ *$//g' -e 's/;//'`
+}
+
+cat $css_file | \
+{
+	while read line
+	do
+		if [[ $line =~ '{' && ! $line =~ '//' ]]
+		then
+			inside=true
+		elif [[ $line =~ '}' && ! $line =~ '//' ]]
+		then
+			inside=false
+		elif [[ $inside == true && $line =~ ':' ]]
+		then
+			property=`echo $line | awk -F':' '{print $1}'`
+			property=`strip $property`
+			value=`echo $line | awk -F':' '{print $2}'`
+			value=`strip $value`
+
+			line="$property: $value;"
+
+			if [ ${properties[$line]+exists} ]
+			then
+				occurrences=$(( ${properties[$line]} + 1 ))
+				properties[$line]=$occurrences
+				dupes[$line]=$occurrences
+			else
+				properties[$line]=1
+			fi
+		fi
+	done
+
+	dupe_count=${#dupes[@]}
+
+	if [ $dupe_count == 0 ]
+	then
+		echo -e '\e[32mGREAT JOB! No duplicate properties were detected :)\e[0m'
+	else
+		echo -en "\e[31mGood try, but I found $dupe_count duplicated propert"
+		
+		if [ $dupe_count == 1 ]
+		then
+			echo -n 'y'
+		else
+			echo -n 'ies'
+		fi
+
+		echo -e " :(\e[0m"
+
+		for i in "${!dupes[@]}"
+		do
+			echo -en "  \e[1;37m${dupes[$i]}\e[0m: \e[34m"
+			echo $i | awk -F':' '{print $1}' | tr -d '\n'
+			echo -en '\e[0m:\e[33m'
+			echo $i | awk -F':' '{print $2}' | tr -d '\n'
+			echo -e "\e[0m"
+		done
+	fi
+}
