@@ -13,3 +13,10 @@ better. OSX is still shipping with version 3.2 but you can easily upgrade to
 ## Usage
 
 	./wetness /path/to/file.css
+
+## Installation
+
+### OSX via Homebrew
+
+	brew tap joshtronic/homebrew-personal
+	brew install wetness
