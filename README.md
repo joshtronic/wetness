@@ -18,5 +18,5 @@ better. OSX is still shipping with version 3.2 but you can easily upgrade to
 
 ### OSX via Homebrew
 
-	brew tap joshtronic/homebrew-personal
+	brew tap joshtronic/homebrew-formulae
 	brew install wetness
